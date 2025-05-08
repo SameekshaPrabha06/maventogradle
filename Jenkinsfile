@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        gradle 'Gradle-8'     // Name configured in Jenkins Global Tool Config
-        jdk 'JDK11'           // Name configured in Jenkins Global Tool Config
+        gradle 'Gradle'    // Use the exact name defined in Jenkins
+        jdk 'JDK'          // Use the exact name defined in Jenkins
     }
 
     environment {
@@ -13,34 +13,25 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm // Assumes you're using Git with Jenkins
+                checkout scm
             }
         }
 
         stage('Build with Gradle') {
             steps {
-                echo 'Running gradle build...'
+                echo 'Building with Gradle...'
                 sh 'gradle clean build'
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo 'Running unit tests...'
                 sh 'gradle test'
             }
         }
 
-        stage('Verify Jar Output') {
+        stage('Run JAR') {
             steps {
-                echo 'Listing generated files...'
-                sh 'ls -lh build/libs'
-            }
-        }
-
-        stage('Run the Application') {
-            steps {
-                echo "Running ${env.JAR_FILE}"
                 sh "java -jar ${env.JAR_FILE}"
             }
         }
@@ -48,10 +39,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build completed and JAR executed successfully!"
+            echo "✅ Success!"
         }
         failure {
-            echo "❌ Build or execution failed!"
+            echo "❌ Failure!"
         }
     }
 }
